@@ -9,6 +9,32 @@ from pyAvTranscoder import avtranscoder as av
 def api_ping():
     return 'pong'
 
+@app.route('/')
+def index():
+    libs = av.getLibraries()
+    libraries = []
+    for library in av.getLibraries():
+        libraries.append({
+            'name': library.getName(),
+            'version': library.getStringVersion(),
+            'licence': library.getLicense(),
+            })
+
+    av.preloadCodecsAndFormats();
+    inputExtensions = []
+    for extension in av.getInputExtensions():
+        inputExtensions.append(extension)
+    outputExtensions = []
+    for extension in av.getOutputExtensions():
+        outputExtensions.append(extension)
+
+    infos = {
+        "libraries": libraries,
+        "inputExtensions": inputExtensions,
+        "outputExtensions": outputExtensions,
+    }
+    return jsonify(**infos)
+
 @app.route('/probe', methods=['GET'])
 def get_probe_on_file():
     path = request.args.get('path')
