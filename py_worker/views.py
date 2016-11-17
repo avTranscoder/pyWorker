@@ -15,7 +15,7 @@ def get_probe_on_file():
     app.logger.info('Path %s', path)
     av.preloadCodecsAndFormats()
     inputFile = av.InputFile(str(path))
-    data = inputFile.getProperties().asJson()
+    data = inputFile.getProperties().allPropertiesAsJson()
     return Response(data, mimetype='application/json')
 
 @app.route('/jobs', methods=['GET'])
