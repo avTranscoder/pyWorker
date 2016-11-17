@@ -12,9 +12,21 @@ def api_ping():
 @app.route('/probe', methods=['GET'])
 def get_probe_on_file():
     path = request.args.get('path')
-    app.logger.info('Path %s', path)
+
+    if path == None:
+        abort(400)
+
+    analyse_gop = request.args.get('analyse_gop', False)
+
+    analyse_gop_state = "disabled"
+    if analyse_gop:
+        analyse_gop_state = "enabled"
+
+    app.logger.info('Analyse path: %s - GOP analysis: %s', path, analyse_gop_state)
     av.preloadCodecsAndFormats()
     inputFile = av.InputFile(str(path))
+    # if analyse_gop:
+    #     inputFile.analyse(av.NoDisplayProgress(), av.eAnalyseLevelFirstGop)
     data = inputFile.getProperties().allPropertiesAsJson()
     return Response(data, mimetype='application/json')
 
