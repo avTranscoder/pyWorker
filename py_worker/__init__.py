@@ -5,4 +5,4 @@ __version__ = '0.1.0'
 
 app = Flask(__name__)
 
-import views
+from py_worker import views

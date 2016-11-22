@@ -1,0 +1,144 @@
+<html>
+<head>
+  <title>avTranscoder Demo</title>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/5.5.10/jsoneditor.min.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/5.5.10/jsoneditor.min.css" media="screen" />
+
+  <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
+  <style type="text/css">
+    h1{
+      margin-top: 20px;
+      font-family: 'Orbitron', cursive;
+    }
+    body{
+      background-color: #000;
+      color: #fff;
+      font-family: arial;
+    }
+    div.image_render{
+      background-color: #444;
+      width: 45vw;
+      height: 80vh;
+      display: inline-block;
+      vertical-align: top;
+    }
+    div#metadata_render{
+      width: 50vw;
+      height: 80vh;
+      display: inline-block;
+      vertical-align: top;
+      background-color: #FFF;
+    }
+    img{
+      max-width: 100%;
+    }
+    .fields{
+      margin-bottom: 10px;
+    }
+    #input_path{
+      border: none;
+      padding: 4px;
+      width: 50vw;
+      margin-left: 5px;
+    }
+    button, select{
+      padding: 5px;
+      border-radius: 5px;
+      background-color: #fff;
+      border: 2px solid #4CAF50;
+      cursor: pointer;
+      -webkit-transition-duration: 0.2s; /* Safari */
+      transition-duration: 0.2s;
+    }
+    #level{
+      margin-left: 70px;
+    }
+    button:hover{
+      background-color: #4CAF50 !important;
+      color: white;
+    }
+    input[type=number]{
+      width: 50px;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>avTranscoder Demo</h1>
+  <div>
+    <div class="fields">
+      <label for="input_path">Input file</label>
+
+      <input id="input_path" type="text"></input>
+    </div>
+    <div class="fields">
+      <select id="level">
+        <option value="fast">Fast</option>
+        <option value="firstGop">First GOP</option>
+        <!-- <option value="full">Full</option> -->
+      </select>
+      <button id="metadata">Get Metadatas</button>
+      <button id="preview">Preview</button>
+      <input id="frame" type="number" value="0" min="0"></input>
+
+      <button id="prev">Prev.</button>
+      <button id="next">Next</button>
+    </div>
+  </div>
+  <div class="render">
+    <div class="image_render">
+      <img id="display" src="" />
+    </div>
+
+    <div id="metadata_render"></div>
+  </div>
+  
+  <script>
+    var container = document.getElementById("metadata_render");
+    var options = {};
+    var editor = new JSONEditor(container, options);
+
+    function render(){
+      var filename = $("#input_path").val();
+      var frame = $("#frame").val();
+
+      var url = "/thumbnail?path=" + filename + "&frame=" + frame;
+      $("#display").attr('src', url);
+    }
+
+    $("#next").click(function(){
+      var frame = parseInt($("#frame").val());
+      frame += 1;
+      $("#frame").val(frame);
+      render();
+    })
+    $("#prev").click(function(){
+      var frame = parseInt($("#frame").val());
+      frame -= 1;
+      if(frame < 0){
+        frame = 0;
+      }
+      $("#frame").val(frame);
+      render();
+    })
+    $("#metadata").click(function(){
+      var filename = $("#input_path").val();
+      var level = $("#level").val();
+
+      $.ajax({
+        url: "/probe?level=" + level + "&path=" + filename,
+      }).done(function(data) {
+        console.log(data);
+        editor.set(data);
+      });
+    })
+    $("#preview").click(function(){
+      render();
+    })
+
+  </script>
+</body>
+</html>
