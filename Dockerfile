@@ -1,4 +1,4 @@
-FROM arnaudmarcantoine/avtranscoder:develop
+FROM avtrancoder/avtranscoder:develop
 
 ADD . /server
 
