@@ -1,4 +1,4 @@
-FROM avtrancoder/avtranscoder:develop
+FROM avtranscoder/avtranscoder:develop
 
 ADD . /server
 
